@@ -1,0 +1,251 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For You</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+margin:0;
+font-family:'Inter',sans-serif;
+height:100vh;
+overflow:hidden;
+display:flex;
+justify-content:center;
+align-items:center;
+
+background:linear-gradient(180deg,#ffe4e6,#ffd1d6,#ffc3c9,#ffb6bd);
+}
+
+/* envelope */
+
+#envelope{
+width:320px;
+height:200px;
+background:#d75a66;
+position:relative;
+cursor:pointer;
+box-shadow:0 20px 50px rgba(0,0,0,0.2);
+transition:transform 1s ease;
+}
+
+#envelope:before{
+content:"";
+position:absolute;
+width:0;
+height:0;
+border-left:160px solid transparent;
+border-right:160px solid transparent;
+border-bottom:100px solid #c94b57;
+top:-100px;
+transform-origin:bottom;
+transition:transform 1s ease;
+}
+
+.open:before{
+transform:rotateX(180deg);
+}
+
+.hidden{
+display:none;
+}
+
+/* card */
+
+.card{
+max-width:700px;
+background:rgba(255,255,255,0.65);
+backdrop-filter:blur(12px);
+padding:60px;
+border-radius:20px;
+box-shadow:0 30px 60px rgba(120,40,40,0.15);
+text-align:center;
+}
+
+h1{
+font-family:'Playfair Display',serif;
+color:#8f2d34;
+margin-bottom:25px;
+}
+
+.message{
+line-height:1.8;
+font-size:16px;
+color:#4a2c2c;
+white-space:pre-line;
+}
+
+/* petals */
+
+.petal{
+position:absolute;
+width:12px;
+height:16px;
+background:#e88993;
+border-radius:50% 50% 50% 0;
+opacity:.8;
+animation:fall linear infinite;
+}
+
+@keyframes fall{
+0%{transform:translateY(-10vh) rotate(0deg);}
+100%{transform:translateY(110vh) rotate(360deg);}
+}
+
+/* rose container */
+
+#rose3d{
+position:absolute;
+right:8%;
+top:12%;
+width:220px;
+height:220px;
+}
+
+@media(max-width:700px){
+
+#rose3d{display:none;}
+
+.card{
+margin:20px;
+padding:35px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="envelope"></div>
+
+<div id="rose3d"></div>
+
+<div id="card" class="card hidden">
+
+<h1>For You</h1>
+
+<div id="message" class="message"></div>
+
+</div>
+
+<audio id="music" loop>
+<source src="https://cdn.pixabay.com/audio/2022/03/15/audio_1d95b8f1de.mp3" type="audio/mp3">
+</audio>
+
+<script>
+
+/* envelope click */
+
+const envelope=document.getElementById("envelope");
+const card=document.getElementById("card");
+const music=document.getElementById("music");
+
+envelope.onclick=()=>{
+
+envelope.classList.add("open");
+
+setTimeout(()=>{
+envelope.classList.add("hidden");
+card.classList.remove("hidden");
+music.play();
+typeMessage();
+},900)
+
+};
+
+/* petals */
+
+for(let i=0;i<30;i++){
+
+let p=document.createElement("div");
+p.className="petal";
+p.style.left=Math.random()*100+"vw";
+p.style.animationDuration=6+Math.random()*6+"s";
+document.body.appendChild(p);
+
+}
+
+/* typing message */
+
+const text=`Good morning bu. I hope you've got good sleep and you're not feeling bad.
+I'm sorry if you've had a bad night.
+
+I really miss the simple happy space we had built but I also believe we can get back to it.
+I am sorry that I keep blaming you at times when I should have said it's okay and moved ahead.
+
+And with the stress we are going through, it gets even worse.
+I hope once things calm down a little bit, we will go better again but I also have the fear working in me that you'll walk away as soon as you're comfortable. However, I am ready to face it I think.
+
+I'll be gone until the afternoon today coz i got to work more than I am right now if I wanna clean up the mess I did in my life.
+
+If you wanna meet or if you wanna talk about something which is essential, call me up.
+
+Be nice se after you wake up.
+
+I love you.`;
+
+let i=0;
+
+function typeMessage(){
+
+let el=document.getElementById("message");
+
+let typing=setInterval(()=>{
+
+el.textContent+=text[i];
+i++;
+
+if(i>=text.length)clearInterval(typing);
+
+},25);
+
+}
+
+</script>
+
+<!-- three.js -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+
+const scene=new THREE.Scene();
+
+const camera=new THREE.PerspectiveCamera(75,1,0.1,1000);
+camera.position.z=3;
+
+const renderer=new THREE.WebGLRenderer({alpha:true});
+renderer.setSize(220,220);
+
+document.getElementById("rose3d").appendChild(renderer.domElement);
+
+const light=new THREE.PointLight(0xffffff,1);
+light.position.set(5,5,5);
+scene.add(light);
+
+const geometry=new THREE.TorusKnotGeometry(0.7,0.2,120,16);
+const material=new THREE.MeshStandardMaterial({color:0xb03040});
+
+const rose=new THREE.Mesh(geometry,material);
+scene.add(rose);
+
+function animate(){
+requestAnimationFrame(animate);
+rose.rotation.y+=0.003;
+renderer.render(scene,camera);
+}
+
+animate();
+
+</script>
+
+</body>
+</html>
+```
